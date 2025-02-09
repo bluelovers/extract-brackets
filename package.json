@@ -1,6 +1,6 @@
 {
   "name": "@bluelovers/extract-brackets",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Extract nested brackets from strings",
   "keywords": [
     "extract",
