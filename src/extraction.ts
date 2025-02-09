@@ -1,44 +1,22 @@
-import { popLast } from './utils';
-import { IExtractionError } from './types';
-
-export function _createExtractionError(self: Extraction, msg: string)
-{
-	const e: IExtractionError<SyntaxError> = new SyntaxError(msg);
-	e.self = self;
-
-	return e
-}
-
-export interface IExtractionSimple extends Array<string | string[] | IExtractionSimple>
-{
-
-}
-
-export interface IExtractionResult
-{
-	nest: IExtractionResult[];
-	simple: IExtractionSimple;
-	hasNest: boolean;
-	str: string;
-	index: number[];
-}
+import { _createExtractionError, popLast } from './utils';
+import { IExtractionResult, IExtractionStringCharsObject } from './types';
 
 export class Extraction
 {
-	matches: any[];
-	protected tree: any[];
-	protected escaped: boolean;
-	protected openChar: string;
-	protected closeChar: string;
-	protected stringChars: any;
+	matches: IExtractionResult[];
+	tree: IExtractionResult[];
+	escaped: boolean;
+	openChar: string;
+	closeChar: string;
+	protected stringChars: IExtractionStringCharsObject;
 	protected regex: RegExp;
-	protected sameChar: boolean;
+	sameChar: boolean;
 	count: number;
 	index: number;
 	result: IExtractionResult;
 	protected unescapeStr: string;
 
-	constructor(open: string, close: string, stringChars: any, regex: RegExp)
+	constructor(open: string, close: string, stringChars: IExtractionStringCharsObject, regex: RegExp)
 	{
 		this.matches = [];
 		this.tree = [];
@@ -52,7 +30,7 @@ export class Extraction
 		this.sameChar = open === close;
 	}
 
-	init(str: string, count: number): any[]
+	init(str: string, count: number)
 	{
 		const arr = str.split(this.regex);
 		const l = arr.length;
@@ -159,12 +137,15 @@ export class Extraction
 			//if the last element is a string, then append
 			if (typeof nest[nest.length - 1] === "string")
 			{
+				// @ts-ignore
 				nest[nest.length - 1] += str;
+				// @ts-ignore
 				this.result.simple += str;
 			}
 			//otherwise, the new string
 			else
 			{
+				// @ts-ignore
 				nest.push(str);
 				this.result.simple.push(str);
 			}

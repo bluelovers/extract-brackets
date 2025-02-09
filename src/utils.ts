@@ -1,6 +1,13 @@
 //to sort an array by length
-import { defaultStringObj, Mates, regexChars } from './types';
-import { _createExtractionError, Extraction, IExtractionResult } from './extraction';
+import {
+	defaultStringObj,
+	IExtractionError,
+	IExtractionResult,
+	IExtractionStringCharsObject,
+	Mates,
+	regexChars,
+} from './types';
+import { Extraction } from './extraction';
 
 function sortArrayByLength(a: string, b: string)
 {
@@ -73,7 +80,7 @@ export function addEscape(str: string)
 export function buildStringObj(arr: string | readonly string[])
 {
 
-	const ret = {
+	const ret: IExtractionStringCharsObject = {
 		open: [] as string[],
 		close: [] as string[],
 	};
@@ -100,7 +107,9 @@ export function buildStringObj(arr: string | readonly string[])
 			}
 			else
 			{
+				// @ts-ignore
 				ret.open.push(el);
+				// @ts-ignore
 				ret.close.push(getMate(el));
 			}
 		}
@@ -132,3 +141,10 @@ export function infoNearExtractionError(infoline: string, self: Extraction)
 	return _nearString(infoline, result.index?.[0] || 0, result.simple?.[0] as any)
 }
 
+export function _createExtractionError(self: Extraction, msg: string)
+{
+	const e: IExtractionError<SyntaxError> = new SyntaxError(msg);
+	e.self = self;
+
+	return e
+}

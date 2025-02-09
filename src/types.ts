@@ -34,6 +34,28 @@ export const Mates = {
 
 export const regexChars = ['^', '$', '[', ']', '{', '}', '(', ')', '\\', '/', '.', ',', '?', '-', '+', '*', '|'] as const;
 
-export type IExtractionError<T extends Error> = T & {
+export type IExtractionError<T extends Error = SyntaxError> = T & {
 	self?: Extraction;
 }
+
+export interface IExtractionSimple extends Array<string | string[] | IExtractionSimple>
+{
+
+}
+
+export interface IExtractionResult
+{
+	nest: IExtractionResult[];
+	simple: IExtractionSimple;
+	hasNest: boolean;
+	str: string;
+	index: number[];
+}
+
+export interface IExtractionStringCharsObject
+{
+	open: string[];
+	close: string[];
+}
+
+export type IExtractionCallback<T extends any = IExtractionResult[]> = (e: IExtractionError, result: IExtractionResult[]) => T;
