@@ -12,31 +12,37 @@ Add endIndex
 	Open/close/escape chars can be regex or array of strings?
 */
 
-
 import { buildRegex, buildStringObj, getMate, popLast } from './utils';
 
 //To extract everything inside the outer most brackets
-function Extractor(open, close, stringChars)
+class Extractor
 {
+	protected regex: RegExp;
+	protected openChar: string;
+	protected closeChar: string;
+	protected stringChars: any;
 
-	let regex: RegExp;
-
-	if (typeof open !== 'string') throw new TypeError('The \'open\' argument must be a string');
-
-	//if close isnt a string, then get a mate for it
-	if (typeof close !== 'string') close = getMate(open);
-
-	stringChars = buildStringObj(stringChars);
-	regex = buildRegex(open, close, stringChars.open);
-
-	this.extract = function (str, count)
+	constructor(open: string, close?: string, stringChars?: any)
 	{
+		if (typeof open !== 'string') throw new TypeError('The \'open\' argument must be a string');
 
-		if (typeof count !== "number") count = 0;
+		//if close isnt a string, then get a mate for it
+		if (typeof close !== 'string') close = getMate(open);
 
-		return new Extraction(open, close, stringChars, regex).init(str, count);
+		this.openChar = open;
+		this.closeChar = close;
+		this.stringChars = buildStringObj(stringChars);
+		this.regex = buildRegex(open, close, this.stringChars.open);
+
+		this.extract = this.extract.bind(this);
 	}
 
+	extract(str: string, count?: number)
+	{
+		if (typeof count !== "number") count = 0;
+
+		return new Extraction(this.openChar, this.closeChar, this.stringChars, this.regex).init(str, count);
+	}
 }
 
 function Extraction(open, close, stringChars, regex)
