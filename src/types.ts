@@ -1,14 +1,22 @@
-//common string symbols
+import { Extraction } from './extraction';
+
+/**
+ * common string symbols
+ */
 export const defaultStringChars = [
 	'"',
 	'\'',
 	'`',
-];
+] as const;
+
 export const defaultStringObj = {
 	open: defaultStringChars,
 	close: defaultStringChars,
-};
-//Common mates for statements
+} as const;
+
+/**
+ * Common mates for statements
+ */
 export const Mates = {
 	'(': ')',
 	'[': ']',
@@ -22,5 +30,10 @@ export const Mates = {
 	'{-': '-}',
 	'%{': '%}',
 	'<#': '#>',
-};
-export const regexChars = ['^', '$', '[', ']', '{', '}', '(', ')', '\\', '/', '.', ',', '?', '-', '+', '*', '|'];
+} as const;
+
+export const regexChars = ['^', '$', '[', ']', '{', '}', '(', ')', '\\', '/', '.', ',', '?', '-', '+', '*', '|'] as const;
+
+export type IExtractionError<T extends Error> = T & {
+	self?: Extraction;
+}

@@ -1,8 +1,31 @@
 import { popLast } from './utils';
+import { IExtractionError } from './types';
+
+export function _createExtractionError(self: Extraction, msg: string)
+{
+	const e: IExtractionError<SyntaxError> = new SyntaxError(msg);
+	e.self = self;
+
+	return e
+}
+
+export interface IExtractionSimple extends Array<string | string[] | IExtractionSimple>
+{
+
+}
+
+export interface IExtractionResult
+{
+	nest: IExtractionResult[];
+	simple: IExtractionSimple;
+	hasNest: boolean;
+	str: string;
+	index: number[];
+}
 
 export class Extraction
 {
-	protected matches: any[];
+	matches: any[];
 	protected tree: any[];
 	protected escaped: boolean;
 	protected openChar: string;
@@ -10,9 +33,9 @@ export class Extraction
 	protected stringChars: any;
 	protected regex: RegExp;
 	protected sameChar: boolean;
-	protected count: number;
-	protected index: number;
-	protected result: any;
+	count: number;
+	index: number;
+	result: IExtractionResult;
 	protected unescapeStr: string;
 
 	constructor(open: string, close: string, stringChars: any, regex: RegExp)
@@ -45,9 +68,8 @@ export class Extraction
 		//if there is still a result, then there was an error
 		if (this.result)
 		{
-			console.dir(this);
-			if (this.escaped) throw new Error("Unable to parse. Unclosed String detected");
-			throw new Error("Unable to parse. Unclosed Bracket detected");
+			if (this.escaped) throw _createExtractionError(this, "Unable to parse. Unclosed String detected");
+			throw _createExtractionError(this, "Unable to parse. Unclosed Bracket detected");
 		}
 
 		return this.matches;
@@ -79,7 +101,7 @@ export class Extraction
 	open(): boolean
 	{
 		//create a new result object
-		const obj: any = {
+		const obj: IExtractionResult = {
 			nest: [],
 			simple: [],
 			hasNest: false,
@@ -105,7 +127,7 @@ export class Extraction
 			//add the result to the tree
 			this.tree.push(this.result);
 
-			this.tree.forEach((branch, i) =>
+			this.tree.forEach((branch) =>
 			{
 				//get the index of this for each parent
 				obj.index.push(this.index - branch.index[0] - 1);
@@ -160,7 +182,7 @@ export class Extraction
 
 	close(): boolean
 	{
-		this.tree.forEach((branch, i) =>
+		this.tree.forEach((branch) =>
 		{
 			//add the close char to all strings
 			branch.str += this.closeChar;

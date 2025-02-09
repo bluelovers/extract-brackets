@@ -37,14 +37,20 @@ export class Extractor
 		this.stringChars = buildStringObj(stringChars);
 		this.regex = buildRegex(open, close, this.stringChars.open);
 
+		this.createExtraction = this.createExtraction.bind(this);
 		this.extract = this.extract.bind(this);
+	}
+
+	createExtraction()
+	{
+		return new Extraction(this.openChar, this.closeChar, this.stringChars, this.regex)
 	}
 
 	extract(str: string, count?: number)
 	{
 		if (typeof count !== "number") count = 0;
 
-		return new Extraction(this.openChar, this.closeChar, this.stringChars, this.regex).init(str, count);
+		return this.createExtraction().init(str, count);
 	}
 }
 

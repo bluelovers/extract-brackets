@@ -1,5 +1,5 @@
 {
-  "name": "extract-brackets",
+  "name": "@bluelovers/extract-brackets",
   "version": "0.0.7",
   "description": "Extract nested brackets from strings",
   "keywords": [
@@ -105,5 +105,8 @@
     "tslib": ">=2.8.1"
   },
   "peerDependencies": {},
-  "packageManager": "yarn@1.22.19"
+  "packageManager": "yarn@1.22.19",
+  "publishConfig": {
+    "access": "public"
+  }
 }
